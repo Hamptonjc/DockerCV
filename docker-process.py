@@ -21,6 +21,16 @@ def processing(frame):
                     fontScale, color, thickness, cv2.LINE_AA)
     return frame
 
+def detectlines(img):
+    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(gray,50,150,apertureSize = 3)
+    minLineLength = 100
+    maxLineGap = 10
+    lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength,maxLineGap)
+    for x1,y1,x2,y2 in lines[0]:
+        cv2.line(img,(x1,y1),(x2,y2),(0,255,0),2)
+    return img
+
 
 def main(shm_size: int=10600000):
 
@@ -32,11 +42,12 @@ def main(shm_size: int=10600000):
 
     while True:
 
-        local_sem.acquire(timeout=5)
+        local_sem.acquire(timeout=1)
 
         """ Processing """
-        frame = utils.read_from_memory(mapfile)
-        frame = np.frombuffer(frame, dtype=np.uint8).reshape((720,1280,3))
+        frame = utils.read_from_memory(mapfile, 1555200)
+        frame = np.frombuffer(frame, dtype=np.uint8).reshape((540, 960, 3))
+        frame = detectlines(frame)
         frame = processing(frame)
         frame = frame.tobytes()
         utils.write_to_memory(mapfile, frame)
