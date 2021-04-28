@@ -43,15 +43,41 @@ def main(shm_size: int=10600000):
     while True:
 
         local_sem.acquire(timeout=1)
+        # get frame byte size
+        n_bytes = ''
+        mapfile.seek(0)
+        b = mapfile.read_byte()
+        while b != 0:
+            n_bytes += chr(b)
+            b = mapfile.read_byte()
+        docker_sem.release()
+        n_bytes = int(n_bytes)
 
-        """ Processing """
-        frame = utils.read_from_memory(mapfile, 1555200)
-        frame = np.frombuffer(frame, dtype=np.uint8).reshape((540, 960, 3))
+        # get shape
+        local_sem.acquire()
+        mapfile.seek(0)
+        b = mapfile.read_byte()
+        n = ''
+        shape = []
+        while b != 0:
+            b = chr(b)
+            if b != ',':
+                n += b
+            else:
+                shape.append(int(n))
+                n = ''
+            b = mapfile.read_byte()
+
+        docker_sem.release()
+
+        # Get frame
+        local_sem.acquire()
+        frame = utils.read_from_memory(mapfile, n_bytes)
+        frame = np.frombuffer(frame, dtype=np.uint8).reshape(tuple(shape))
         frame = detectlines(frame)
         frame = processing(frame)
         frame = frame.tobytes()
         utils.write_to_memory(mapfile, frame)
-
         docker_sem.release()
 
         # for local process reading

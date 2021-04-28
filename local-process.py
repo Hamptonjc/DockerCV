@@ -25,11 +25,31 @@ def main(shm_size: int=40000000):
         frame = frame.tobytes()
 
 
-        # Write to shared memory
+        # Write to size to shm
+        docker_sem.acquire()
+        byte_size = str(len(frame)) + '\0'
+        utils.write_to_memory(mapfile, byte_size.encode())
+        # wait for processing
+        local_sem.release()
+
+        # Write shape to shm
+        docker_sem.acquire()
+        str_shape = ''
+        for i in shape:
+            str_shape += str(i)
+            str_shape += ','
+        str_shape += '\0'
+
+        utils.write_to_memory(mapfile, str_shape.encode())
+        # wait for processing
+        local_sem.release()
+
+        # Write frame to shm
         docker_sem.acquire()
         bytes_wrote = utils.write_to_memory(mapfile, frame)
         # wait for processing
         local_sem.release()
+
 
         # Read from shared memory
         docker_sem.acquire()
@@ -40,7 +60,7 @@ def main(shm_size: int=40000000):
 
         #display
         cv2.imshow('Live', frame)
-        cv2.waitKey(30)
+        cv2.waitKey(1)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     
@@ -48,8 +68,8 @@ def main(shm_size: int=40000000):
     cv2.destroyAllWindows()
     mapfile.close()
     ipc.unlink_shared_memory("/shm")
-   # local_sem.unlink()
-   # docker_sem.unlink()
+    local_sem.unlink()
+    docker_sem.unlink()
 
 
 if __name__ == '__main__':
