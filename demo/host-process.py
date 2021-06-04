@@ -1,12 +1,11 @@
 import dockercv as dcv
 import cv2
-import mmap
 
 
 def main():
 
-    dcv_node = dcv.HostNode(shm_size=40000000, image_bytes=1555200, image_shape=(540, 960, 3))
-    vid = cv2.VideoCapture('../solidWhiteRight.mp4')
+    dcv_node = dcv.HostNode(shm_size=4000000)
+    vid = cv2.VideoCapture('./solidWhiteRight.mp4')
 
     
     while True:
@@ -16,15 +15,16 @@ def main():
         if frame is None:
             break
 
-        dcv_node.send(frame)
-        frame = dcv_node.receive()
+        frame = dcv_node.transmit(frame)
 
         #display
-        cv2.imshow('Live', frame)
-        cv2.waitKey(30)
+        cv2.imshow('Processed', frame)
+        cv2.waitKey(1)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
+    
+    vid.release()
+    cv2.destroyAllWindows()
     del dcv_node
 
 

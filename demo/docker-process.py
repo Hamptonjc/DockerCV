@@ -1,4 +1,3 @@
-import mmap
 import dockercv as dcv
 import cv2
 
@@ -20,7 +19,7 @@ def processing(frame):
     return frame 
 
 def main():
-    dcv_node = dcv.DockerNode(image_bytes=1555200, image_shape=(540, 960, 3))
+    dcv_node = dcv.DockerNode()
 
     while True:
         frame = dcv_node.receive()
