@@ -1,0 +1,14 @@
+Metadata-Version: 1.1
+Name: dockercv
+Version: 0.0.1
+Summary: A solution for visualizing Docker-based computer vision applications
+Home-page: UNKNOWN
+Author: Jonathan Hampton
+Author-email: hamptonjc221@gmail.com
+License: UNKNOWN
+Description: DockerCV uses IPC mechanisms to allow for Numpy processing (OpenCV / PyTorch / TensorFlow / etc.) within a Docker container while still viewing the resulting images/videos locally on the host device. This eliminates the need for X11 Forwarding.
+Keywords: docker cv,docker visual
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
