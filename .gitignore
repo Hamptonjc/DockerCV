@@ -1,3 +1,6 @@
 __pycache__
 .vscode
 .devcontainer
+build
+dist
+dockercv.egg-info
