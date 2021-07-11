@@ -1,6 +1,6 @@
 # DockerCV
 
-DockerCV is a solution to visualizing Docker-based computer-vision / machine learning applications. Rather than fooling with other options such as Xserver, DockerCV provides a simple API to visualize images/videos processed in a Docker container.
+DockerCV is a solution to visualizing Docker-based computer-vision / machine learning applications locally. Rather than fooling with other options such as Xserver, DockerCV provides a simple API to visualize images/videos processed in a local Docker container.
 
 DockerCV uses IPC mechanisms to pass a local image to a Docker container for processing, then receives the processed image back to then display locally.
 
